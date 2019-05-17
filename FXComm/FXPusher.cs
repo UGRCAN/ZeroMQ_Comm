@@ -8,16 +8,16 @@ using ZeroMQ;
 
 namespace FXComm
 {
-    public class FXPublisher
+    public class FXPusher
     {
         private readonly ZContext _zContext;
         private readonly ZSocket _zSocket;
         private string _address;
 
-        public FXPublisher()
+        public FXPusher()
         {
             _zContext = new ZContext();
-            _zSocket = new ZSocket(_zContext, ZSocketType.PUB)
+            _zSocket = new ZSocket(_zContext, ZSocketType.PUSH)
             {
                 // todo add: Timeoutlar dışarıdan verileccek
                 SendTimeout = TimeSpan.FromSeconds(10),
@@ -43,15 +43,14 @@ namespace FXComm
             _zContext.Dispose();
         }
 
-        public void Publish(string data, string topic = null)
+        public void Push(string data, string topic = null)
         {
-            ZError error;
             using (var packet = new ZMessage())
             {
                 if (topic != null)
                     packet.Add(new ZFrame(topic));
-
                 packet.Add(new ZFrame(data));
+                ZError error;
                 if (!_zSocket.Send(packet, out error))
                 {
                     throw new ZException(error);
