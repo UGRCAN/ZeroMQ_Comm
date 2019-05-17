@@ -31,8 +31,7 @@ namespace FXComm
         {
             _address = address;
             ZError error;
-            _zSocket.Connect(address, out error);
-            _zSocket.Bind(address);
+            _zSocket.Bind(address, out error);
         }
 
         public void Disconnect()
