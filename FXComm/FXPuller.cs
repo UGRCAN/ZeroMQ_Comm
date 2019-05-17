@@ -23,14 +23,7 @@ namespace FXComm
         public FXPuller()
         {
             _zContext = new ZContext();
-            _zSocket = new ZSocket(_zContext, ZSocketType.PULL)
-            {
-                // todo add: Timeoutlar dışarıdan verileccek
-                SendTimeout = TimeSpan.FromSeconds(10),
-                ReceiveTimeout = TimeSpan.FromSeconds(10),
-                RequestRelaxed = true,
-                Immediate = true,
-            };
+            _zSocket = new ZSocket(_zContext, ZSocketType.PULL);
         }
 
         public void Connect(string address)

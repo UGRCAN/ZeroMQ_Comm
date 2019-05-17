@@ -19,11 +19,7 @@ namespace FXComm
             _zContext = new ZContext();
             _zSocket = new ZSocket(_zContext, ZSocketType.PUB)
             {
-                // todo add: Timeoutlar dışarıdan verileccek
-                SendTimeout = TimeSpan.FromSeconds(10),
-                ReceiveTimeout = TimeSpan.FromSeconds(10),
-                RequestRelaxed = true,
-                Immediate = true,
+                Linger = TimeSpan.Zero,
             };
         }
 
@@ -51,7 +47,8 @@ namespace FXComm
                     packet.Add(new ZFrame(topic));
 
                 packet.Add(new ZFrame(data));
-                if (!_zSocket.Send(packet, out error))
+                var success = _zSocket.Send(packet, out error);
+                if (!success)
                 {
                     throw new ZException(error);
                 }

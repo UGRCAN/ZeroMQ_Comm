@@ -40,11 +40,16 @@ namespace FXComm
             _zContext.Dispose();
         }
 
-        public void Subscribe(string topic)
+        public void Subscribe(string topic = null)
         {
             if (_listenerThread != null) return;
 
-            _zSocket.Subscribe(topic);
+            if (topic == null)
+                _zSocket.SubscribeAll();
+            else
+            {
+                _zSocket.Subscribe(topic);
+            }
 
             _listenerThread = new Thread(Listen) { };
             _listenerThread.Start();
@@ -69,10 +74,10 @@ namespace FXComm
                     {
                         if (message != null)
                         {
-                            var topic = message[0].ReadString();
-                            var data = message[1].ReadString();
-
-                            OnReceived(topic, data);
+                            if (message.Count == 1)
+                                OnReceived(null, message[0].ReadString());
+                            else
+                                OnReceived(message[0].ReadString(), message[1].ReadString());
                         }
                     }
 

@@ -17,14 +17,7 @@ namespace FXComm
         public FXPusher()
         {
             _zContext = new ZContext();
-            _zSocket = new ZSocket(_zContext, ZSocketType.PUSH)
-            {
-                // todo add: Timeoutlar dışarıdan verileccek
-                SendTimeout = TimeSpan.FromSeconds(10),
-                ReceiveTimeout = TimeSpan.FromSeconds(10),
-                RequestRelaxed = true,
-                Immediate = true,
-            };
+            _zSocket = new ZSocket(_zContext, ZSocketType.PUSH);
         }
 
         public void Connect(string address)
@@ -32,7 +25,6 @@ namespace FXComm
             _address = address;
             ZError error;
             _zSocket.Connect(address, out error);
-            _zSocket.Bind(address);
         }
 
         public void Disconnect()
@@ -51,7 +43,8 @@ namespace FXComm
                     packet.Add(new ZFrame(topic));
                 packet.Add(new ZFrame(data));
                 ZError error;
-                if (!_zSocket.Send(packet, out error))
+                var success = _zSocket.Send(packet, out error);
+                if (!success)
                 {
                     throw new ZException(error);
                 }
